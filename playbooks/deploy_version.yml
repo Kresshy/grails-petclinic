@@ -1,0 +1,14 @@
+---
+- hosts: vm
+  remote_user: devops
+  tasks:
+    - name: Kill existing application
+      ignore_errors: yes
+      command: docker kill petclinic
+
+    - name: Remove existing application
+      ignore_errors: yes
+      command: docker rm petclinic
+
+    - name: Deploy new application on server
+      command: docker run -d -p 80:8080 --name petclinic '{{docker_id}}'/petclinic:'{{version}}'

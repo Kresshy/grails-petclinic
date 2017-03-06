@@ -1,0 +1,16 @@
+---
+- hosts: vm
+  remote_user: devops
+  tasks:
+    - name: Installs docker on server
+      become: true
+      apt:
+        name: docker.io
+        state: latest
+        update_cache: true
+
+    - name: Add user to docker group
+      become: true
+      user:
+        name: devops
+        groups: docker,devops
