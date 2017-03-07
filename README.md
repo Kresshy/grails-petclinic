@@ -64,7 +64,7 @@ Or you can deploy a specific version of your application by using the `deploy_ve
 
 After the deploy you should be able to reach your application on the following url:
 
-    http://<server-ip-address>/petclinic-0.2
+    http://<server-ip-address>/
 
 ## Rollback
 
