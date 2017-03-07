@@ -2,25 +2,33 @@
 
 ## Prerequisites
 
-1. Make sure the VM / Server is running and you get the ip address
+1. Make sure the VM / Server is running and there is internet connection and you get the ip address
+    * `ping index.hu`
     * `ifconfig`
-2. Change ip address in the hosts file `./playbooks/hosts`
-3. Generate ssh-key with ssh-keygen on your local machine
-    * `ssh-keygen`
-4. Copy ssh-key to the server
-    * `ssh-copy-id devops@<server-ip-address>`
-5. Install python on the server because it is needed for Ansible
+2. SSH to the server from your local machine
+    * `ssh devops@<server-ip-address>`
+3. Install python on the server because it is needed for Ansible
     * `sudo apt install python-minimal`
-6. Install Ansible, Grails, Groovy and Docker locally on your machine
+4. Change ip address in the ansible hosts file `./playbooks/hosts` and in `/etc/ansible/hosts`
+5. Generate SSH key with ssh-keygen on your local machine
+    * `ssh-keygen`
+6. Copy ssh-key to the server
+    * `ssh-copy-id devops@<server-ip-address>`
+7. Add SSH key to ssh-agent from your users home directory
+    * `ssh-add ~/.ssh/<ssh-key-name>`
+8. Validate that Ansible is able to ping the server (the response should contain a successful message)
+    * `ansible all -m ping -u devops`
+9. Install Ansible, Grails, Groovy and Docker locally on your machine
     * see documentations and install guides
     * http://docs.ansible.com/ansible/intro_installation.html
     * http://groovy-lang.org/install.html
     * https://grails.org/download.html
     * https://docs.docker.com/engine/installation/
-7. Configure server with Ansible configure_server playbook
+10. Configure server with Ansible `configure_server` playbook
     * This will install docker on the server
     * Add the devops user to the docker group (otherwise sudo would needed when executing docker commands)
     * `ansible-playbook ./playbooks/configure_server.yml  --ask-sudo-pass`
+11. To be able to run the build and deploy please create an account at `hub.docker.com`.
 
 ## Build
 
@@ -28,10 +36,9 @@ The build script is located under `./build-tools/` directory.
 During the build the application will be compiled and a `war` file will be created.
 After the war file is created it will be added to the docker image which is based on the
 `tomcat:7-jre8` image and a docker image will be built and uploaded to the docker registry
-at hub.docker.com. For more details see the `Dockerfile` in the project root directory.
+at `hub.docker.com`. For more details see the `Dockerfile` in the project root directory.
 
-To be able to run the build please create an account at hub.docker.com.
-After you successfully created your account you can login on your personal machine with the following command:
+Login to docker hub on your personal machine with the following command:
 
     docker login
 
@@ -54,6 +61,10 @@ docker image with the tag `latest` if exists.
 Or you can deploy a specific version of your application by using the `deploy_version` playbook:
 
     ansible-playbook ./playbooks/deploy_version.yml --extra-vars "version=<version-number> docker_id=<your-docker-id>"
+
+After the deploy you should be able to reach your application on the following url:
+
+    http://<server-ip-address>/petclinic-0.2
 
 ## Rollback
 
